@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 import base64
 import hashlib
 import hmac
@@ -68,8 +67,13 @@ def transform(params):
                 else:
                     params.pop(key)
                     for index, val in enumerate(value):
-                        for k, v in val.items():
-                            params["%s[%d].%s" % (key, index, k)] = v
+                        for name, v in val.items():
+                            k = "%s[%d].%s" % (key, index, name)
+                            params[k] = text_type(v)
+        elif isinstance(value, dict):
+            params.pop(key)
+            for index, (k, v) in enumerate(sorted(value.items())):
+                params["%s[%d].%s" % (key, index, k)] = text_type(v)
         else:
             raise ValueError(type(value))
     return params
